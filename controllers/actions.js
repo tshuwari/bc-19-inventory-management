@@ -60,6 +60,7 @@ function getUsers(access_level){
             users = snapshot.val();
             _.each(users, function(userInfo, user){
                 if(userInfo.access_level == access_level){
+                    userInfo = _.merge(userInfo, { email: user+'@gmail.com' });
                     staffUsers.push(userInfo);
                 }
             });

@@ -41,8 +41,10 @@ app.post('/login', urlencodedParser, function(req, res){
 app.get('/superadmin/home', function(req, res){
     if (!authentication.validateSuperAdmin(req)){
         actions.getAdminAssets().then(function(payload){
-            console.log(payload.assets);
-            res.render('pages/admin', { notifications: payload.notifications, assets: payload.assets });
+            actions.getAdminUsers().then(function(adminUsers){
+                console.log(adminUsers);
+                res.render('pages/admin', { notifications: payload.notifications, assets: payload.assets, adminUsers: adminUsers });
+            });
         });
     } else {
         res.render('pages/unauthorized');
@@ -76,22 +78,23 @@ app.post('/assets', urlencodedParser, function(req, res){
         name: req.body.name,
         andela_code: req.body.andela_code,
         description: req.body.description,
+        date_bought: req.body.date_bought,
         assigned: false,
     }
-    items[req.body.serial_no] = itemInfo;
-    database.ref('assets').set(items);
-    res.json({status: 'Success'});
+    database.ref('assets/'+req.body.serial_no).set(itemInfo);
+    res.redirect('/admin/home');
 });
 
 app.post('/admins', urlencodedParser, function(req, res){
     var admin = {};
+    var email = req.body.email.replace("@gmail.com", "");
     var adminInfo = {
         name: req.body.name,
         password: req.body.password,
+        access_level: 2
     };
-    admin[req.body.email] = adminInfo;
-    database.ref('assets').set(admin);
-    res.json({status: 'Success'});
+    database.ref('users/'+email).set(adminInfo);
+    res.redirect('/admin/home');
 });
 
 app.put('/assets/:serialno', urlencodedParser, function(req, res){
