@@ -111,11 +111,12 @@
                   </li>
                 </ul>
             </div>
-            <form id="send-btn" class="box-footer clearfix no-border">
-              <input type="text" name="userId" class="form-control" placeholder="User-Id">
-               <input type="text" name="name" class="form-control" placeholder="Name">
-                 
-                  <input type="text" name="andelaCode" class="form-control" placeholder="Andela Code">
+            <form id="send-btn" class="box-footer clearfix no-border" action="/user/lost" method="post">
+              <input type="text" name="user_name" class="form-control" placeholder="User_Name">
+               <input type="text" name="asset_name" class="form-control" placeholder="Asset_Name">
+                                   <input type="text" name="andela_code" class="form-control" placeholder="Andela Code">
+
+                  <input type="text" name="serial_no" class="form-control" placeholder="serial_no">
            
                    <button type="submit" id="asbtn" class="btn btn-default pull-left"> Report</button>
                
@@ -126,16 +127,17 @@
             <div class="box-body">
               <ul class="todo-list">
                 <li>
-                  <span class="text">Lost And Found Assets</span>
+                  <span class="text">Found Assets</span>
                   <small class="label label-danger"></small>
                   </li>
                 </ul>
             </div>
-            <form id="send-btn" class="box-footer clearfix no-border">
-              <input type="text" name="userId" class="form-control" placeholder="User-Id">
-               <input type="text" name="name" class="form-control" placeholder="Name">
-                 <input type="text" name="serialNo" class="form-control" placeholder="Serial No." >
-                  <input type="text" name="andelaCode" class="form-control" placeholder="Andela Code">
+            <form id="send-btn" class="box-footer clearfix no-border" action="/user/found" method="post">
+               <input type="text" name="user_name" class="form-control" placeholder="User_Name">
+                 <input type="text" name="asset_name" class="form-control" placeholder="Asset_Name" >
+                  <input type="text" name="andela_code" class="form-control" placeholder="Andela_Code">
+                  <input type="text" name="serial_no" class="form-control" placeholder="serial_no">
+                  
     
                    <button type="submit" id="asbtn" class="btn btn-default pull-left">Report</button>
                
@@ -158,7 +160,7 @@
   <div class="control-sidebar-bg"></div>
 </div>
 
-<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <script>
   $.widget.bridge('uibutton', $.ui.button);

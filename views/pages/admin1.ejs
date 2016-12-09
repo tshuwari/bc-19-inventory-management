@@ -62,66 +62,12 @@
         <ul class="sidebar-menu">
           <li class="active treeview">
             <ul class="treeview-menu">
+             
               <li>
-                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal4"><i class="fa fa-plus"></i>Assign Assets</button><br>
-                <div class="modal fade" id="myModal4" role="dialog">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                      </div>
-                      <div class="modal-body">
-                        <div class="login-box">
-                          <div class="login-logo">
-                            <a href="#"><b>Assign</b></a>
-                          </div>
-                          <div class="login-box-body">
-                            <p class="login-box-msg">Assign Assets</p>
-                            <form class="box-footer clearfix no-border" action="/assignees" method="post">
-                              <input type="text" name="assignee" class="form-control" placeholder="Assignee">
-                              <input type="text" name="name" class="form-control" placeholder="Name">
-                              <input type="text" name="serial_no" class="form-control" placeholder="Serial No.">
-                              <input type="text" name="andela_code" class="form-control" placeholder="Andela Code">
-                              <input type="date" name="date_assigned" class="form-control" placeholder="Date Assigned">
-                              <input type="date" name="reclaim_date" class="form-control" placeholder="Reclaim Date">
-                              <button type="submit" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Assign</button>
-                            </form>
-                          </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button><br>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="container">
-                  <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal5">Unassign Assets</button>
-                  <div class="modal fade" id="myModal5" role="dialog">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal">&times;</button>
-                          <h4 class="modal-title">Unassign</h4>
-                        </div>
-                        <div class="modal-body">
-                          <form class="box-footer clearfix no-border" action="/assignees" method="post">
-                            <input type="text" name="assignee" class="form-control" placeholder="Assignee">
-                            <input type="text" name="name" class="form-control" placeholder="Name">
-                            <input type="text" name="serial_no" class="form-control" placeholder="Serial No.">
-                            <input type="text" name="andela_code" class="form-control" placeholder="Andela Code">
-                            <input type="date" name="date_assigned" class="form-control" placeholder="Date Assigned">
-                            <input type="date" name="reclaim_date" class="form-control" placeholder="Reclaim Date">
-                            <button type="submit" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Assign</button>
-                          </form>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal2"><i class="fa fa-plus"></i>Assign Assets</button>
+              </li><br>
+              <li>
+                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal3"><i class="fa fa-minus"></i>UnAssign Assets</button>
               </li>
             </ul>
           </li>
@@ -129,46 +75,164 @@
         </ul>
       </section>
     </aside>
+    <div class="modal fade" id="myModal1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="login-box">
+              <div class="login-logo">
+                <a href="#"><b>Add new Admin</b></a>
+              </div>
+              <div class="login-box-body">
+                <p class="login-box-msg">Enter Admin Details Below</p>
+                <form action="/admins" method="post">
+                  <div class="form-group has-feedback">
+                    <input type="text" name="name" class="form-control" placeholder="Name">
+                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <input type="text" name="email" class="form-control" placeholder="Email">
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <input type="text" name="password" class="form-control" placeholder="Password">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-4">
+                      <button type="submit" class="btn btn-primary btn-block btn-flat">Create</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="myModal2" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="login-box">
+              <div class="login-logo">
+                <a href="#"><b>Assign Assets</b></a>
+              </div>
+              <div class="login-box-body">
+                <p class="login-box-msg">Assign Assets</p>
+                <form class="box-footer clearfix no-border" action="/assignees/admin" method="post">
+                  <select name="name" class="form-control">
+                    <% userKeys.forEach(function(ukey) { %>
+                      <option value="<%= ukey.name %>"><%= ukey.name %></option>
+                    <% }) %>
+                 </select>
+                  <select name="serial_no" class="form-control">
+                    <% assetKeys.forEach(function(key) { %>
+                      <option value="<%= key %>"><%= key %></option>
+                    <% }) %>
+                 </select>
+                  <input type="date" name="date_assigned" class="form-control" placeholder="Date Assigned">
+                  <input type="date" name="reclaim_date" class="form-control" placeholder="Reclaim Date">
+                  <button type="submit" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Assign</button>
+                </form>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="myModal3" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="login-box">
+              <div class="login-logo">
+                <a href="#"><b>Unassign Assets</b></a>
+              </div>
+              <div class="login-box-body">
+                <p class="login-box-msg">Unassign Assets</p>
+                <form class="box-footer clearfix no-border" action="/assignees" method="post">
+                  <select name="assignee" class="form-control">
+                    <option value="">Select assignee</option>
+                    <% userKeys.forEach(function(key) { %>
+                      <option value="<%= key.name %>"><%= key.name %></option>
+                    <% }) %>
+                 </select>
+                  <select name="serial_no" class="form-control">
+                  <option value="">Select asset serial no</option>
+                    <% assetKeys.forEach(function(key) { %>
+                      <option value="<%= key %>"><%= key %></option>
+                    <% }) %>
+                 </select>
+                  <input type="date" name="date_assigned" class="form-control" placeholder="Date Assigned">
+                  <input type="date" name="reclaim_date" class="form-control" placeholder="Reclaim Date">
+                  <button type="submit" class="btn btn-default pull-right"><i class="fa fa-plus"></i> UnAssign</button>
+                </form>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="content-wrapper">
       <section class="content-header">
         <h1>
           Dashboard
         </h1>
-        <ol class="breadcrumb">
-          <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-          <li class="active">Dashboard</li>
-        </ol>
+        
       </section>
       <section class="content">
         <div class="row">
           <div class="col-lg-3 col-xs-6">
             <div class="small-box bg-aqua">
               <div class="inner">
-                <h3>50</h3>
-                <p>Unassigned</p>
+                <h3>
+                  <%= assetsUnassigned.length %>
+                </h3>
+                <p>New Assets</p>
               </div>
               <div class="icon">
                 <i class="ion ion-bag"></i>
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-xs-6">
+
+          <!--<div class="col-lg-3 col-xs-6">
             <div class="small-box bg-green">
               <div class="inner">
-                <h3>53<sup style="font-size: 20px"></sup></h3>
+                <h3>
+                  <%= assetsAssigned.length %><sup style="font-size: 20px"></sup></h3>
                 <p>Assigned</p>
               </div>
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
               </div>
             </div>
-          </div>
+          </div>-->
           <div class="col-lg-3 col-xs-6">
           </div>
         </div>
         <div class="container">
-          <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal6">Add Assets</button>
-          <div class="modal fade" id="myModal6" role="dialog">
+          <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add Assets</button>
+          <div class="modal fade" id="myModal" role="dialog">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
@@ -188,13 +252,13 @@
                         </li>
                       </ul>
                     </div>
-                    <form class="box-footer clearfix no-border" action="/assets" method="post">
+                    <form class="box-footer clearfix no-border" action="/assets/admin" method="post">
                       <input type="text" name="name" class="form-control" placeholder="Name">
                       <input type="text" name="description" class="form-control" placeholder="Description">
-                      <input type="text" name="serial_no" class="form-control" placeholder="Serial No.">
                       <input type="text" name="andela_code" class="form-control" placeholder="Andela Code">
+                      <input type="text" name="serial_no" class="form-control" placeholder="Serial_No">
                       <input type="date" name="date_bought" class="form-control" placeholder="Date Bought">
-                      <button type="submit" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add Asset</button>
+                      <button type="submit" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add item</button>
                     </form>
                   </div>
                 </div>
@@ -206,7 +270,8 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-8 col-offset-2">
+          <div class="col-sm-8">
+            <h2>Assets</h2>
             <table id="example2" class="table table-bordered table-hover dataTable" role="grid" aria-describedby="example2_info">
               <thead>
                 <tr role="row">
@@ -214,30 +279,73 @@
                   <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Description</th>
                   <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Serial Number</th>
                   <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">Andela Code</th>
-                  <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Date Bought</th>
+                  
+                  
                 </tr>
               </thead>
               <tbody>
-                <% assets.forEach(function(asset){ %>
-                  <tr>
-                    <td>
-                      <%= asset.name %>
-                    </td>
-                    <td>
-                      <%= asset.description %>
-                    </td>
-                    <td>
-                      <%= asset.serialNo %>
-                    </td>
-                    <td>
-                      <%= asset.andela_code %>
-                    </td>
-                    <td>
-                      <%= asset.date_bought %>
-                    </td>
-                  </tr>
-                  <% }); %>
+                <% if(typeof assets !== "undefined") { %>
+                  <% Object.keys(assets).forEach(function(asset){ %>
+                    <tr>
+                      <td>
+                        <%= assets[asset].name %>
+                      </td>
+                      <td>
+                        <%= assets[asset].description %>
+                      </td>
+                      <td>
+                        <%= assets[asset].andela_code %>
+                      </td>
+                      <td>
+                        <%= asset %>
+                      </td>
+            
+   
+                    </tr>
+                    <% }); %>
+                      <% } %>
               </tbody>
+            </table>
+
+
+          </div>
+          <div class="col-sm-4">
+            <h2>Assignee</h2>
+            <table id="example2" class="table table-bordered table-hover dataTable" role="grid" aria-describedby="example2_info">
+              <thead>
+                <tr role="row">
+                <th class="sorting" tabindex="0" aria-controls="example2" rowspan="0" colspan="1" aria-label="Engine version: activate to sort column ascending">Assignee</th>
+                  
+                </tr>
+              </thead>
+                <tbody>
+                <% if(assignees !== "undefined") { %>
+                  <% Object.keys(assignees).forEach(function(assignee){ %>
+                    
+                      <tr>
+                        <td>
+                          <%= assignees[assignee].name %>
+                        </td>
+                        
+                      </tr>
+                      <% }); %>
+                        <% } %>
+              </tbody>
+              <!--<tbody>
+                <% if(adminUsers) { %>
+                  <% adminUsers.forEach(function(admin){ %>
+                    <% console.log(admin) %>
+                      <tr>
+                        <td>
+                          <%= admin.name %>
+                        </td>
+                        <td>
+                          <%= admin.email %>
+                        </td>
+                      </tr>
+                      <% }); %>
+                        <% } %>
+              </tbody>-->
             </table>
           </div>
         </div>

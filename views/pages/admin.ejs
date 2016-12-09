@@ -199,10 +199,7 @@
         <h1>
           Dashboard
         </h1>
-        <ol class="breadcrumb">
-          <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-          <li class="active">Dashboard</li>
-        </ol>
+        
       </section>
       <section class="content">
         <div class="row">
@@ -212,14 +209,14 @@
                 <h3>
                   <%= assetsUnassigned.length %>
                 </h3>
-                <p>Unassigned</p>
+                <p>New Assets</p>
               </div>
               <div class="icon">
                 <i class="ion ion-bag"></i>
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-xs-6">
+          <!--<div class="col-lg-3 col-xs-6">
             <div class="small-box bg-green">
               <div class="inner">
                 <h3>
@@ -230,7 +227,7 @@
                 <i class="ion ion-stats-bars"></i>
               </div>
             </div>
-          </div>
+          </div>-->
           <div class="col-lg-3 col-xs-6">
           </div>
         </div>
@@ -260,7 +257,7 @@
                       <input type="text" name="name" class="form-control" placeholder="Name">
                       <input type="text" name="description" class="form-control" placeholder="Description">
                       <input type="text" name="andela_code" class="form-control" placeholder="Andela Code">
-                      <input type="text" name="assigned" class="form-control" placeholder="Assigned">
+                      <input type="text" name="serial_no" class="form-control" placeholder="Serial_No">
                       <input type="date" name="date_bought" class="form-control" placeholder="Date Bought">
                       <button type="submit" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add item</button>
                     </form>
@@ -283,9 +280,10 @@
                   <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Description</th>
                   <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Serial Number</th>
                   <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">Andela Code</th>
-                  <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Assigned</th>
-                  <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Assignee</th>
-                  <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Date Bought</th>
+                  <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">Date_Bought</th>
+                  <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">Assigned</th>
+                  
+                  
                 </tr>
               </thead>
               <tbody>
@@ -299,10 +297,10 @@
                         <%= assets[asset].description %>
                       </td>
                       <td>
-                        <%= asset %>
+                        <%= assets[asset].andela_code %>
                       </td>
                       <td>
-                        <%= assets[asset].andela_code %>
+                        <%= asset %>
                       </td>
                       <td>
                         <%= assets[asset].date_bought %>
@@ -310,31 +308,39 @@
                       <td>
                         <%= assets[asset].assigned %>
                       </td>
+            
+   
                     </tr>
                     <% }); %>
                       <% } %>
-                      if(typeof assigned_assets !== "undefined"){
-                       <% Object.keys(assigned_assets).forEach(function(assigned){ %>
-                      <tr>
-                      <td>
-                        <%= assigned_assets[assigned].assignee %>
-                      </td>
-                      </tr>
-                       <% }); %>
-                      <% } %>
               </tbody>
             </table>
+
+
           </div>
           <div class="col-sm-4">
-            <h2>Admins</h2>
+            <h2>Assignee</h2>
             <table id="example2" class="table table-bordered table-hover dataTable" role="grid" aria-describedby="example2_info">
               <thead>
                 <tr role="row">
-                  <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Name</th>
-                  <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Email</th>
+                <th class="sorting" tabindex="0" aria-controls="example2" rowspan="0" colspan="1" aria-label="Engine version: activate to sort column ascending">Assignee</th>
+                  
                 </tr>
               </thead>
-              <tbody>
+                <tbody>
+                <% if(assignees !== "undefined") { %>
+                  <% Object.keys(assignees).forEach(function(assignee){ %>
+                    
+                      <tr>
+                        <td>
+                          <%= assignees[assignee].name %>
+                        </td>
+                        
+                      </tr>
+                      <% }); %>
+                        <% } %>
+              </tbody>
+              <!--<tbody>
                 <% if(adminUsers) { %>
                   <% adminUsers.forEach(function(admin){ %>
                     <% console.log(admin) %>
@@ -348,7 +354,7 @@
                       </tr>
                       <% }); %>
                         <% } %>
-              </tbody>
+              </tbody>-->
             </table>
           </div>
         </div>

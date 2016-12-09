@@ -59,10 +59,11 @@ app.post('/login', urlencodedParser, function(req, res){
             if(userObj.access_level === 3){
                 res.redirect('user/home');
             }else if(userObj.access_level === 2){
-                res.redirect('admin/home');
-            }else{
                 res.redirect('superadmin/home');
             }
+            // else{
+            //     res.redirect('superadmin/home');
+            // }
                 
         });
     }).catch(function(err){
@@ -101,14 +102,21 @@ app.get('/superadmin/home', function(req, res){
                 }
 
             }
-            // res.send(assigned);
+
+
+        database.ref('assigned_assets').on('value', function(snapshot){
+            var assignees = snapshot.val();
+            var assigneeKeys = Object.keys(assignees);
+        
+            
             res.render('pages/admin', {
                 assets: assets,
                 adminUsers: usersInfo,
                 assetKeys: keys,
                 assetsAssigned: assigned,
                 assetsUnassigned: unassigned,
-                userKeys: userAssigned
+                userKeys: userAssigned,
+                assignees: assignees,
 
             });
         });
@@ -116,20 +124,67 @@ app.get('/superadmin/home', function(req, res){
     });
     
 });
-
-app.get('/admin/home', function(req, res){
-    if (!authentication.validateAdmin(req)){
-        actions.getAdminAssets().then(function(payload){
-            res.render('pages/admin1', { notifications: payload.notifications, assets: payload.assets });
-        });
-    } else {
-        res.render('pages/unauthorized');
-    }
 });
 
+app.get('/admin/home', function(req, res){
+    
+    database.ref('users').on('value', function(snapshot){
+        var usersInfo =[];
+        var userAssigned = [];
+        var users = snapshot.val();
+        var uKeys = Object.keys(users);
+        for(var user in users) {
+            if(users[user].access_level <= 2) {
+                usersInfo.push(users[user]);
+            }
+            if(users[user].access_level === 3){
+                userAssigned.push(users[user]);
+            }
+        }
+        
+        database.ref('assets').on('value', function(snapshot){
+            var assets = snapshot.val();
+            var keys = Object.keys(assets);
+            var assigned = [];
+            var unassigned = [];
+            for(var asset in assets){
+                
+                if(assets[asset].assigned === true){
+                    assigned.push(asset);
+                }else{
+                    unassigned.push(asset);
+                }
+
+            }
+
+
+        database.ref('assigned_assets').on('value', function(snapshot){
+            var assignees = snapshot.val();
+            var assigneeKeys = Object.keys(assignees);
+        
+            
+            res.render('pages/admin1', {
+                assets: assets,
+                adminUsers: usersInfo,
+                assetKeys: keys,
+                assetsAssigned: assigned,
+                assetsUnassigned: unassigned,
+                userKeys: userAssigned,
+                assignees: assignees,
+
+            });
+        });
+        
+    });
+    
+});
+});
+
+
 app.get('/user/home', function(req, res){
+    console.log(req.session.user, "test");
     var user = JSON.parse(req.session.user);
-    database.ref('assigned_assets/' +user.nme).on('value', function(snapshot){
+    database.ref('assigned_assets/' +user.name).on('value', function(snapshot){
             var assets = snapshot.val();
             var assigned = [];
             var unassigned = [];
@@ -149,6 +204,28 @@ app.get('/user/home', function(req, res){
     
 });
 
+app.post('/user/lost', urlencodedParser, function(req, res){
+    var serial = req.body.serial_no;
+    var reportInfo = {
+        user_name: req.body.user_name,
+        asset_name: req.body.asset_name,
+        andela_code: req.body.andela_code,
+    }
+    database.ref('lost_assets/' +serial).set(reportInfo)
+    res.redirect('/user/home');
+});
+
+app.post('/user/found', urlencodedParser, function(req, res){
+    var serial = req.body.serial_no;
+    var reportInfo = {
+        user_name: req.body.user_name,
+        asset_name: req.body.asset_name,
+        andela_code: req.body.andela_code,
+    }
+    database.ref('found_assets/' +serial).set(reportInfo)
+    res.redirect('/user/home');
+});
+
 app.post('/assets', urlencodedParser, function(req, res){
     var items = {};
     var itemInfo = {
@@ -160,6 +237,20 @@ app.post('/assets', urlencodedParser, function(req, res){
     }
     database.ref('assets/'+req.body.serial_no).set(itemInfo);
     res.redirect('/superadmin/home');
+});
+
+
+app.post('/assets/admin', urlencodedParser, function(req, res){
+    var items = {};
+    var itemInfo = {
+        name: req.body.name,
+        andela_code: req.body.andela_code,
+        description: req.body.description,
+        date_bought: req.body.date_bought,
+        assigned: false,
+    }
+    database.ref('assets/'+req.body.serial_no).set(itemInfo);
+    res.redirect('/admin/home');
 });
 
 app.post('/assignees', urlencodedParser, function(req, res){
@@ -178,6 +269,24 @@ app.post('/assignees', urlencodedParser, function(req, res){
     })
    
  });
+
+ app.post('/assignees/admin', urlencodedParser, function(req, res){
+    
+    database.ref('assets/'+req.body.serial_no).on('value', function(asset) {
+        var updates = {};
+        var assetUpdate = asset.val();
+        assetUpdate['assigned'] = true;
+        updates['assets/'+req.body.serial_no] = assetUpdate;
+        
+        database.ref().update(updates);
+        database.ref('assigned_assets/'+req.body.name).push(req.body);
+
+
+        res.redirect('/admin/home');
+    })
+   
+ });
+
 
 app.post('/admins', urlencodedParser, function(req, res){
     var body = req.body;
@@ -212,7 +321,7 @@ app.get('/users', function(req, res){
 });
 
 
+
 app.listen(process.env.PORT || 5000, function(){
- console.log('Im here now');
 });
  

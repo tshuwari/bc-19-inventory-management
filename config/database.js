@@ -10,7 +10,6 @@ var config = {
 firebase.initializeApp(config),
 
 
-// module.exports = dbRef;
 module.exports = {
   dbRef: firebase.database(),
   auth: firebase.auth()
