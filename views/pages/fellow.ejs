@@ -70,7 +70,7 @@
   <div class="content-wrapper">
     <section class="content-header">
       <h1>
-        Dashboard
+        Dashboard  <%= user.name %>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -80,22 +80,11 @@
 
     <section class="content">
       <div class="row">
-        <div class="col-lg-3 col-xs-6">
-          <div class="small-box bg-aqua">
-            <div class="inner">
-              <h3>50</h3>
 
-              <p>Unassigned</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-bag"></i>
-            </div>
-          </div>
-        </div>
         <div class="col-lg-3 col-xs-6">
           <div class="small-box bg-green">
             <div class="inner">
-              <h3>53<sup style="font-size: 20px"></sup></h3>
+              <h3> <%= assetsAssigned.length %><sup style="font-size: 20px"></sup></h3>
 
               <p>Assigned</p>
             </div>
@@ -111,75 +100,48 @@
       </div>
       <div class="row">
         <section class="col-lg-7 connectedSortable">
-        <div class="container">
- 
-  <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
-
-  
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Assets</h4>
-        </div>
-        <div class="modal-body">
-          
-         
-         
-           <div class="box box-primary">
-            <div class="box-body">
-              <ul class="todo-list">
-                <li>
-                  <span class="text">Information</span>
-                  <small class="label label-danger"></small>
-                  </li>
-                </ul>
-            </div>
-            <div class="box-footer clearfix no-border">
-               <input type="text" name="name" class="form-control" placeholder="Name">
-                <input type="text" name="description" class="form-control" placeholder="Description">
-                 <input type="text" name="serialNo" class="form-control" placeholder="Serial No.">
-                  <input type="text" name="andelaCode" class="form-control" placeholder="Andela Code">
-                   <input type="text" name="dateBought" class="form-control" placeholder="Date Bought">
-              <button type="button" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add item</button>
-            </div>
-          </div> 
-
-          
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-  
-</div>
 
 
           <div class="box box-primary">
             <div class="box-body">
               <ul class="todo-list">
                 <li>
-                  <span class="text">Assets</span>
+                  <span class="text">Lost Assets</span>
                   <small class="label label-danger"></small>
                   </li>
                 </ul>
             </div>
             <form id="send-btn" class="box-footer clearfix no-border">
+              <input type="text" name="userId" class="form-control" placeholder="User-Id">
                <input type="text" name="name" class="form-control" placeholder="Name">
-                 <input type="text" name="serialNo" class="form-control" placeholder="Serial No.">
+                 
                   <input type="text" name="andelaCode" class="form-control" placeholder="Andela Code">
-                  <input type="text" name="userId" class="form-control" placeholder="User-Id">
-              <!--     <button type="button" class="btn btn-default pull-right"><i class="fa fa-minus"></i> Unassign item</button> -->
-                   <button type="submit" id="asbtn" class="btn btn-default pull-left"><i class="fa fa-plus"></i> Assign item</button>
+           
+                   <button type="submit" id="asbtn" class="btn btn-default pull-left"> Report</button>
                
             </form>
-          </div>          
+          </div> 
+
+             <div class="box box-primary">
+            <div class="box-body">
+              <ul class="todo-list">
+                <li>
+                  <span class="text">Lost And Found Assets</span>
+                  <small class="label label-danger"></small>
+                  </li>
+                </ul>
+            </div>
+            <form id="send-btn" class="box-footer clearfix no-border">
+              <input type="text" name="userId" class="form-control" placeholder="User-Id">
+               <input type="text" name="name" class="form-control" placeholder="Name">
+                 <input type="text" name="serialNo" class="form-control" placeholder="Serial No." >
+                  <input type="text" name="andelaCode" class="form-control" placeholder="Andela Code">
+    
+                   <button type="submit" id="asbtn" class="btn btn-default pull-left">Report</button>
+               
+            </form>
+          </div>   
+
         <section class="col-lg-5 connectedSortable">
           <div class="box box-solid bg-light-blue-gradient">
 
@@ -188,7 +150,6 @@
           </section>
       </div>
 
-    </section>
   </div>
   <footer class="main-footer">
   
@@ -218,41 +179,5 @@
 <script src="/dist/js/app.min.js"></script>
 <script src="/dist/js/pages/dashboard.js"></script>
 <script src="/dist/js/demo.js"></script>
-<script src="https://www.gstatic.com/firebasejs/3.6.3/firebase.js"></script>
-<script>
-  var config = {
-    apiKey: "AIzaSyCdIMh9RojUAO-rZdV7VhLd8ecWwzPQRP4",
-    authDomain: "inventory-2e654.firebaseapp.com",
-    databaseURL: "https://inventory-2e654.firebaseio.com",
-    storageBucket: "inventory-2e654.appspot.com",
-    messagingSenderId: "59369996865"
-  };
-  firebase.initializeApp(config);
-</script>
-<script>
-  $("#send-btn").submit(function(e){
-    e.preventDefault();
-    // firebase.auth().signInWithEmailAndPassword('testing@test.com', 'password').catch(function(error) {
-    //   // Handle Errors here.
-    //   var errorCode = error.code;
-    //   var errorMessage = error.message;
-    //   console.log(errorMessage);
-    // });
-    
-    // var data = $(this).serializeArray();
-    // var asset = {};
-    // for(var datum in data) {
-    //   asset[data[datum].name] = data[datum].value;
-    // }
-    // // console.log(asset);
-    // var db = firebase.database();
 
-    // var ref = db.ref("trial").push(
-    //   asset
-    // )
-  });
-</script>
-  
-</body>
-</html>
 
