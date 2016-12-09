@@ -259,7 +259,6 @@
                     <form class="box-footer clearfix no-border" action="/assets" method="post">
                       <input type="text" name="name" class="form-control" placeholder="Name">
                       <input type="text" name="description" class="form-control" placeholder="Description">
-                      <!--<input type="text" name="serial_no" class="form-control" placeholder="Serial No.">-->
                       <input type="text" name="andela_code" class="form-control" placeholder="Andela Code">
                       <input type="text" name="assigned" class="form-control" placeholder="Assigned">
                       <input type="date" name="date_bought" class="form-control" placeholder="Date Bought">
@@ -285,6 +284,7 @@
                   <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Serial Number</th>
                   <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">Andela Code</th>
                   <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Assigned</th>
+                  <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Assignee</th>
                   <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Date Bought</th>
                 </tr>
               </thead>
@@ -305,13 +305,22 @@
                         <%= assets[asset].andela_code %>
                       </td>
                       <td>
-                        <%= assets[asset].assigned %>
+                        <%= assets[asset].date_bought %>
                       </td>
                       <td>
-                        <%= assets[asset].date_bought %>
+                        <%= assets[asset].assigned %>
                       </td>
                     </tr>
                     <% }); %>
+                      <% } %>
+                      if(typeof assigned_assets !== "undefined"){
+                       <% Object.keys(assigned_assets).forEach(function(assigned){ %>
+                      <tr>
+                      <td>
+                        <%= assigned_assets[assigned].assignee %>
+                      </td>
+                      </tr>
+                       <% }); %>
                       <% } %>
               </tbody>
             </table>

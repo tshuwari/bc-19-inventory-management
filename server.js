@@ -1,12 +1,20 @@
 var bodyParser = require('body-parser');
 var express    = require('express');
+var session = require('express-session');
 var app        = express();
-var actions    = require('./controllers/actions.js');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var cookieParser = require('cookie-parser');
-var database = require('./config/database.js');
-var authentication = require('./controllers/authentication.js');
+var firebase = require('./config/database');
+var database = firebase.dbRef;
+var auth = firebase.auth;
 
+
+app.use(session({
+    secret: "SECRET",
+    saveUninitialized: true,
+    resave: true,
+    cookie: {}
+}));
 
 app.use(express.static('public'));
 app.use(cookieParser());
@@ -14,41 +22,104 @@ app.set('view engine', 'ejs');
 
 app.use(bodyParser.json());
 
+
+
+app.get("/register", function(req, res) {
+    res.render('pages/register');
+});
+
+app.post("/register", urlencodedParser, function(req, res) {
+    var body = req.body;
+    auth.createUserWithEmailAndPassword(body.email, body.password).then(function(userDetailsFromFirebase) {
+        var user = {email: userDetailsFromFirebase.email, uid: userDetailsFromFirebase.uid,access_level: 3,name: body.name};
+        database.ref("users/"+user.uid).set(user);
+        req.session.user = JSON.stringify(user);
+        res.redirect("/user/home");
+    }).catch(function(err){
+        res.send(err);
+    })
+})
+
+
 app.get('/login', function(req, res){
     res.render('pages/login');
 });
 
 app.post('/login', urlencodedParser, function(req, res){
-    response = {
+    var response = {
         email: req.body.email,
         password: req.body.password,
     };
-    
-    database.ref("users").once("value").then(function(snapshot){
-        var users = snapshot.val();
-        var email = response.email.replace("@gmail.com", "");
-        if(!users[email]){
-            res.end("Invalid user");
-        } else if (users[email]['password'] === response.password){
-            res.cookie('user', JSON.stringify(users[email]));
-            res.redirect('/user/home');
-        } else {
-            res.end('Failure')
-        }
+
+    auth.signInWithEmailAndPassword(response.email, response.password).then(function(userDetailsFromFirebase){
+        database.ref('users/' +userDetailsFromFirebase.uid).on('value', function(user){
+            req.session.user = JSON.stringify(user.val());
+            // res.send(user.val());
+            var userObj = user.val();
+            if(userObj.access_level === 3){
+                res.redirect('user/home');
+            }else if(userObj.access_level === 2){
+                res.redirect('admin/home');
+            }else{
+                res.redirect('superadmin/home');
+            }
+                
+        });
+    }).catch(function(err){
+        res.send(err);
     });
+
 });
 
 app.get('/superadmin/home', function(req, res){
-    if (!authentication.validateSuperAdmin(req)){
-        actions.getAdminAssets().then(function(payload){
-            actions.getAdminUsers().then(function(adminUsers){
-                console.log(adminUsers);
-                res.render('pages/admin', { notifications: payload.notifications, assets: payload.assets, adminUsers: adminUsers });
+    
+    database.ref('users').on('value', function(snapshot){
+        var usersInfo =[];
+        var userAssigned = [];
+        var users = snapshot.val();
+        var uKeys = Object.keys(users);
+        for(var user in users) {
+            if(users[user].access_level <= 2) {
+                usersInfo.push(users[user]);
+            }
+            if(users[user].access_level === 3){
+                userAssigned.push(users[user]);
+            }
+        }
+        
+        database.ref('assets').on('value', function(snapshot){
+            var assets = snapshot.val();
+            var keys = Object.keys(assets);
+            var assigned = [];
+            var unassigned = [];
+            for(var asset in assets){
+                
+                if(assets[asset].assigned === true){
+                    assigned.push(asset);
+                }else{
+                    unassigned.push(asset);
+                }
+
+            }
+
+            database.ref('assigned_assets').on('value', function(snapshot){
+                var assigned = snapshot.val();
+                var keys = Object.keys(assigned_assets);
+            })
+            // res.send(assigned);
+            res.render('pages/admin', {
+                assets: assets,
+                adminUsers: usersInfo,
+                assetKeys: keys,
+                assetsAssigned: assigned,
+                assetsUnassigned: unassigned,
+                userKeys: userAssigned
+
             });
         });
-    } else {
-        res.render('pages/unauthorized');
-    }
+        
+    });
+    
 });
 
 app.get('/admin/home', function(req, res){
@@ -62,14 +133,25 @@ app.get('/admin/home', function(req, res){
 });
 
 app.get('/user/home', function(req, res){
-    if (!authentication.validateUser(req)){
-        var user = JSON.parse(req.cookies.user);
-        actions.getUserAssets(user.email).then(function(payload){
-            res.render('pages/fellow', payload);
-        });
-    } else {
-        res.render('pages/unauthorized');
-    }
+    var user = JSON.parse(req.session.user);
+    database.ref('assigned_assets/' +user.nme).on('value', function(snapshot){
+            var assets = snapshot.val();
+            var assigned = [];
+            var unassigned = [];
+            for(var asset in assets){
+                if(assets[asset].assigned === true){
+                    assigned.push(asset);
+                }else{
+                    unassigned.push(asset);
+                }
+
+            }
+            
+    res.render('pages/fellow', {user: user, assetsAssigned: assigned, assetsUnassigned: unassigned});
+
+            });
+        
+    
 });
 
 app.post('/assets', urlencodedParser, function(req, res){
@@ -82,19 +164,36 @@ app.post('/assets', urlencodedParser, function(req, res){
         assigned: false,
     }
     database.ref('assets/'+req.body.serial_no).set(itemInfo);
-    res.redirect('/admin/home');
+    res.redirect('/superadmin/home');
 });
 
+app.post('/assignees', urlencodedParser, function(req, res){
+    
+    database.ref('assets/'+req.body.serial_no).on('value', function(asset) {
+        var updates = {};
+        var assetUpdate = asset.val();
+        assetUpdate['assigned'] = true;
+        updates['assets/'+req.body.serial_no] = assetUpdate;
+        
+        database.ref().update(updates);
+        database.ref('assigned_assets/'+req.body.name).push(req.body);
+
+
+        res.redirect('/superadmin/home');
+    })
+   
+ });
+
 app.post('/admins', urlencodedParser, function(req, res){
-    var admin = {};
-    var email = req.body.email.replace("@gmail.com", "");
-    var adminInfo = {
-        name: req.body.name,
-        password: req.body.password,
-        access_level: 2
-    };
-    database.ref('users/'+email).set(adminInfo);
-    res.redirect('/admin/home');
+    var body = req.body;
+    auth.createUserWithEmailAndPassword(body.email, body.password).then(function(userDetailsFromFirebase) {
+        var user = {email: userDetailsFromFirebase.email, uid: userDetailsFromFirebase.uid,access_level: 2, name: req.body.name};
+        database.ref("users/"+user.uid).set(user);
+        req.session.user = JSON.stringify(user);
+        res.redirect("/superadmin/home");
+    }).catch(function(err){
+        res.send(err);
+    })
 });
 
 app.put('/assets/:serialno', urlencodedParser, function(req, res){
