@@ -101,11 +101,6 @@ app.get('/superadmin/home', function(req, res){
                 }
 
             }
-
-            database.ref('assigned_assets').on('value', function(snapshot){
-                var assigned = snapshot.val();
-                var keys = Object.keys(assigned_assets);
-            })
             // res.send(assigned);
             res.render('pages/admin', {
                 assets: assets,
@@ -217,7 +212,7 @@ app.get('/users', function(req, res){
 });
 
 
-app.listen(5000, function(){
+app.listen(process.env.PORT || 5000, function(){
  console.log('Im here now');
 });
  
