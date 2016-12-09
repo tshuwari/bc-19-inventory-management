@@ -8,6 +8,10 @@ var config = {
 };
 
 firebase.initializeApp(config),
-dbRef = firebase.database();
 
-module.exports = dbRef;
+
+// module.exports = dbRef;
+module.exports = {
+  dbRef: firebase.database(),
+  auth: firebase.auth()
+}
